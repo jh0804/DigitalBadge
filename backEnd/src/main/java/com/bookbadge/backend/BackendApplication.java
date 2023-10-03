@@ -1,13 +1,13 @@
-package com.bookBadge.backEnd;
+package com.bookbadge.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BlockChainApplication {
+public class BackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BlockChainApplication.class, args);
+		SpringApplication.run(BackendApplication.class, args);
 	}
 
 }
