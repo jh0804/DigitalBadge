@@ -1,0 +1,175 @@
+Organizations:
+  - &OrdererOrg
+    Name: OrdererOrg
+    ID: OrdererMSP
+    MSPDir: crypto-config/ordererOrganizations/libBadge.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('OrdererMSP.admin')"
+    OrdererEndpoints:
+      - orderer.libBadge.com:7050
+
+  - &LibraryOrg
+    Name: LibraryOrg
+    ID: LibraryOrg
+    MSPDir: crypto-config/peerOrganizations/library.libBadge.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('LibraryOrg.admin', 'LibraryOrg.peer', 'LibraryOrg.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('LibraryOrg.admin', 'LibraryOrg.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('LibraryOrg.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('LibraryOrg.peer')"
+    AnchorPeers:
+        - Host: peer0.library.libBadge.com
+          Port: 7051
+
+
+
+Capabilities:
+  Channel: &ChannelCapabilities
+    V2_0: true
+  Orderer: &OrdererCapabilities
+    V2_0: true
+  Application: &ApplicationCapabilities
+    V2_5: true
+
+Application: &ApplicationDefaults
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    LifecycleEndorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+    Endorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+  Capabilities:
+    <<: *ApplicationCapabilities
+    
+Orderer: &OrdererDefaults
+  OrdererType: solo
+  Addresses:
+    - orderer.libBadge.com:7050
+  BatchTimeout: 100s
+  BatchSize:
+    MaxMessageCount: 10
+    AbsoluteMaxBytes: 99 MB
+    PreferredMaxBytes: 512 KB
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    BlockValidation:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+      
+
+
+Channel: &ChannelDefaults
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+  Capabilities:
+    <<: *ChannelCapabilities
+    
+
+
+Profiles:
+  ChannelUsingRaft:
+    <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      OrdererType: etcdraft
+      EtcdRaft:
+        Consenters:
+          - Host: orderer.libBadge.com
+            Port: 7050
+            ClientTLSCert: crypto-config/ordererOrganizations/libBadge.com/orderers/orderer.libBadge.com/tls/server.crt
+            ServerTLSCert: crypto-config/ordererOrganizations/libBadge.com/orderers/orderer.libBadge.com/tls/server.crt
+      Organizations:
+        - *OrdererOrg
+      Capabilities: *OrdererCapabilities
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *LibraryOrg
+      Capabilities: *ApplicationCapabilities
+  OrdererGenesis:
+          Orderer:
+              <<: *OrdererDefaults
+              Organizations:
+                  - *OrdererOrg
+          Consortiums:
+              SampleConsortium:
+                  Organizations:
+                      - *LibraryOrg
+          Policies: 
+              Readers:
+                Type: ImplicitMeta
+                Rule: "ANY Readers"
+              Writers:
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
+              Admins:
+                Type: ImplicitMeta
+                Rule: "MAJORITY Admins"
+  Channel1:
+      Consortium: SampleConsortium
+      Application:
+          <<: *ApplicationDefaults
+          Organizations:
+              - *LibraryOrg
+          Capabilities:
+            <<: *ApplicationCapabilities
+      Policies:  
+        Readers:
+          Type: ImplicitMeta
+          Rule: "ANY Readers"
+        Writers:
+          Type: ImplicitMeta
+          Rule: "ANY Writers"
+        Admins:
+          Type: ImplicitMeta
+          Rule: "MAJORITY Admins"
+        LifecycleEndorsement:
+          Type: ImplicitMeta
+          Rule: "MAJORITY Endorsement"
+        Endorsement:
+          Type: ImplicitMeta
+          Rule: "MAJORITY Endorsement"
