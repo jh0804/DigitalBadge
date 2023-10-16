@@ -3,7 +3,7 @@ PeerOrgs:
     Domain: library.libBadge.com
     EnableNodeOUs: true
     Template:
-      Count: 1
+      Count: 2
       SANS:
         - localhost
     Users:
