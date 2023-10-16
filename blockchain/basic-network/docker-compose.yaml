@@ -1,73 +1,4 @@
-version: '3'
-
-volumes:
-    prometheus_data: {}
-    grafana_storage: {}
-
-services:
-  prometheus:
-    image: prom/prometheus:v2.32.1
-    container_name: prometheus
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-    ports:
-      - "9090:9090"
-    
-  grafana:
-    image: grafana/grafana:8.3.4
-    container_name: grafana
-    user: "104"
-    depends_on:
-      - prometheus
-    ports:
-      - 3000:3000
-    volumes:
-      - grafana_storage:/var/lib/grafana
-      - ./grafana/provisioning/:/etc/grafana/provisioning/
-    env_file:
-      - ./grafana/config.monitoring
-    restart: always
-
-  cadvisor:
-    image: google/cadvisor:latest # gcr.io/cadvisor/cadvisor:latest for ios
-    privileged: true
-    container_name: cadvisor
-    volumes:
-      - /var/run:/var/run:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      # - /cgroup:/cgroup:ro
-    ports:
-      - 8080:8080
-    restart: always
-
-  node-exporter:
-    image: prom/node-exporter:v1.3.1
-    container_name: node-exporter
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - --collector.filesystem.ignored-mount-points
-      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-    ports:
-      - 9100:9100
-    restart: always
-
-networks:
-  default:
-      external: true
-      name: libBadgeNetwork
-      
-#version: '3'
+version: '2'
 
 networks:
   libBadgeNetwork:
@@ -81,8 +12,13 @@ services:
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_GENERAL_GENESISMETHOD=file
       - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/genesis.block
-      - ORDERER_GENERAL_LOCALMSPID=OrdererOrg
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
       - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp/orderer/msp
+      #ENABLE TLS
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/msp/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/msp/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/etc/hyperledger/msp/orderer/tls/ca.crt]
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
     command: orderer
     ports:
@@ -97,21 +33,28 @@ services:
     image: hyperledger/fabric-peer:2.5
     environment:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-      - CORE_PEER_ID=peer0.sales1.libBadge.com
+      - CORE_PEER_ID=peer0.library.libBadge.com
       - CORE_LOGGING_PEER=debug
       - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
-      - CORE_PEER_LOCALMSPID=Sales1Org
+      - CORE_PEER_LOCALMSPID=LibraryMSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
-      - CORE_PEER_ADDRESS=peer0.sales1.libBadge.com:7051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.sales1.libBadge.com:7051
-      - CORE_PEER_GOSSIP_ENDPOINT=peer0.sales1.libBadge.com:7051
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.sales1.libBadge.com:7051
+      - CORE_PEER_ADDRESS=peer0.library.libBadge.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.library.libBadge.com:7051
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.library.libBadge.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.library.libBadge.com:7051
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_libBadgeNetwork
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
-      - 7051:7051
-      - 7053:7053
+      - 17051:7051
+      - 17053:7053
     volumes:
         - /var/run/:/host/var/run/
         - ./crypto-config/peerOrganizations/library.libBadge.com/peers/peer0.library.libBadge.com/msp:/etc/hyperledger/msp/peer
@@ -123,21 +66,21 @@ services:
       - libBadgeNetwork
   peer1.library.libBadge.com:
     container_name: peer1.library.libBadge.com
-    image: hyperledger/fabric-peer:1.4.3
+    image: hyperledger/fabric-peer:2.5
     environment:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_PEER_ID=peer1.library.libBadge.com
       - CORE_LOGGING_PEER=debug
       - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
-      - CORE_PEER_LOCALMSPID=LibraryOrg
+      - CORE_PEER_LOCALMSPID=LibraryMSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
       - CORE_PEER_ADDRESS=peer1.library.libBadge.com:7051
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_libBadgeNetwork
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
-      - 8051:7051
-      - 8053:7053
+      - 18051:7051
+      - 18053:7053
     volumes:
         - /var/run/:/host/var/run/
         - ./crypto-config/peerOrganizations/library.libBadge.com/peers/peer1.library.libBadge.com/msp:/etc/hyperledger/msp/peer
@@ -158,15 +101,19 @@ services:
       - FABRIC_LOGGING_SPEC=INFO
       - CORE_PEER_ID=cli
       - CORE_PEER_ADDRESS=peer0.library.libBadge.com:7051
-      - CORE_PEER_LOCALMSPID=LibraryOrg
+      - CORE_PEER_LOCALMSPID=LibraryMSP
       - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/library.libBadge.com/users/Admin@library.libBadge.com/msp
       - CORE_CHAINCODE_KEEPALIVE=10
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/home/ubuntu/digitalBadge/basic-network/crypto-config/peerOrganizations/library.libBadge.com/peers/peer0.library.libBadge.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/home/ubuntu/digitalBadge/basic-network/crypto-config/peerOrganizations/library.libBadge.com/peers/peer0.library.libBadge.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/home/ubuntu/digitalBadge/basic-network/crypto-config/peerOrganizations/library.libBadge.com/peers/peer0.library.libBadge.com/tls/ca.crt
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: /bin/bash
     volumes:
-        - /var/run/:/host/var/run/
-        - ./../chaincode/:/opt/gopath/src/chaincode/
-        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
-        - ./config:/etc/hyperledger/configtx
+      - /var/run/:/host/var/run/
+      - ./../chaincode/:/opt/gopath/src/chaincode/
+      - ./crypto-config:/etc/hyperledger/crypto-config
+      - ./config:/etc/hyperledger/configtx
     networks:
-        - libBadgeNetwork
+      - libBadgeNetwork
