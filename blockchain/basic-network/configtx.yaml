@@ -14,30 +14,49 @@ Organizations:
         Type: Signature
         Rule: "OR('OrdererMSP.admin')"
     OrdererEndpoints:
-      - orderer.libBadge.com:7050
-
+      - orderer1.libBadge.com:7050
+      - orderer2.libBadge.com:7050
+      - orderer3.libBadge.com:7050
   - &LibraryOrg
     Name: LibraryOrg
-    ID: LibraryOrg
+    ID: LibraryMSP
     MSPDir: crypto-config/peerOrganizations/library.libBadge.com/msp
     Policies:
       Readers:
         Type: Signature
-        Rule: "OR('LibraryOrg.admin', 'LibraryOrg.peer', 'LibraryOrg.client')"
+        Rule: "OR('LibraryMSP.admin', 'LibraryMSP.peer', 'LibraryMSP.client')"
       Writers:
         Type: Signature
-        Rule: "OR('LibraryOrg.admin', 'LibraryOrg.client')"
+        Rule: "OR('LibraryMSP.admin', 'LibraryMSP.client')"
       Admins:
         Type: Signature
-        Rule: "OR('LibraryOrg.admin')"
+        Rule: "OR('LibraryMSP.admin')"
       Endorsement:
         Type: Signature
-        Rule: "OR('LibraryOrg.peer')"
+        Rule: "OR('LibraryMSP.peer')"
     AnchorPeers:
-        - Host: peer0.library.libBadge.com
-          Port: 7051
-
-
+      - Host: peer0.library.libBadge.com
+        Port: 7051
+  - &StudentOrg
+    Name: StudentOrg
+    ID: StudentMSP
+    MSPDir: crypto-config/peerOrganizations/student.libBadge.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('StudentMSP.admin', 'StudentMSP.peer', 'StudentMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('StudentMSP.admin', 'StudentMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('StudentMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('StudentMSP.peer')"
+    AnchorPeers:
+      - Host: peer0.student.libBadge.com
+        Port: 7051
 
 Capabilities:
   Channel: &ChannelCapabilities
@@ -68,10 +87,12 @@ Application: &ApplicationDefaults
   Capabilities:
     <<: *ApplicationCapabilities
     
+
 Orderer: &OrdererDefaults
-  OrdererType: solo
   Addresses:
-    - orderer.libBadge.com:7050
+    - orderer1.libBadge.com:7050
+    - orderer2.libBadge.com:7050
+    - orderer3.libBadge.com:7050
   BatchTimeout: 100s
   BatchSize:
     MaxMessageCount: 10
@@ -93,7 +114,6 @@ Orderer: &OrdererDefaults
       Rule: "ANY Writers"
       
 
-
 Channel: &ChannelDefaults
   Policies:
     Readers:
@@ -107,7 +127,6 @@ Channel: &ChannelDefaults
       Rule: "MAJORITY Admins"
   Capabilities:
     <<: *ChannelCapabilities
-    
 
 
 Profiles:
@@ -118,10 +137,18 @@ Profiles:
       OrdererType: etcdraft
       EtcdRaft:
         Consenters:
-          - Host: orderer.libBadge.com
+          - Host: orderer1.libBadge.com
             Port: 7050
-            ClientTLSCert: crypto-config/ordererOrganizations/libBadge.com/orderers/orderer.libBadge.com/tls/server.crt
-            ServerTLSCert: crypto-config/ordererOrganizations/libBadge.com/orderers/orderer.libBadge.com/tls/server.crt
+            ClientTLSCert: crypto-config/ordererOrganizations/libBadge.com/orderers/orderer1.libBadge.com/tls/server.crt
+            ServerTLSCert: crypto-config/ordererOrganizations/libBadge.com/orderers/orderer1.libBadge.com/tls/server.crt
+          - Host: orderer2.libBadge.com
+            Port: 7050
+            ClientTLSCert: crypto-config/ordererOrganizations/libBadge.com/orderers/orderer2.libBadge.com/tls/server.crt
+            ServerTLSCert: crypto-config/ordererOrganizations/libBadge.com/orderers/orderer2.libBadge.com/tls/server.crt
+          - Host: orderer3.libBadge.com
+            Port: 7050
+            ClientTLSCert: crypto-config/ordererOrganizations/libBadge.com/orderers/orderer3.libBadge.com/tls/server.crt
+            ServerTLSCert: crypto-config/ordererOrganizations/libBadge.com/orderers/orderer3.libBadge.com/tls/server.crt
       Organizations:
         - *OrdererOrg
       Capabilities: *OrdererCapabilities
@@ -129,6 +156,7 @@ Profiles:
       <<: *ApplicationDefaults
       Organizations:
         - *LibraryOrg
+        - *StudentOrg
       Capabilities: *ApplicationCapabilities
   OrdererGenesis:
           Orderer:
@@ -139,6 +167,7 @@ Profiles:
               SampleConsortium:
                   Organizations:
                       - *LibraryOrg
+                      - *StudentOrg
           Policies: 
               Readers:
                 Type: ImplicitMeta
@@ -155,6 +184,7 @@ Profiles:
           <<: *ApplicationDefaults
           Organizations:
               - *LibraryOrg
+              - *StudentOrg
           Capabilities:
             <<: *ApplicationCapabilities
       Policies:  
