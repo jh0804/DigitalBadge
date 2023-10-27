@@ -1,6 +1,7 @@
 # DigitalBadge
 
 *네트워크 구축 순서*
+
 export FABRIC_CFG_PATH=$PWD
 
 1.crypto-config.yaml
