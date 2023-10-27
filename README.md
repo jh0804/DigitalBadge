@@ -29,11 +29,14 @@ docker exec -e "CORE_PEER_LOCALMSPID=StudentMSP" -e "CORE_PEER_MSPCONFIGPATH=/op
 
 
 *설정*
+
 -조직
+
 LibraryOrg peer0, peer1
 StudentOrg peer0, peer1
 
 -채널
+
 프로필 이름 : Channel1
 ID : channelbadge1
 실제 생성 파일명 : channel1.tx
