@@ -1,21 +1,21 @@
 # DigitalBadge
 
-##네트워크 구축 순서
+## 네트워크 구축 순서
 
 export FABRIC_CFG_PATH=$PWD
 
-###1.crypto-config.yaml
+### 1.crypto-config.yaml
 
 ./bin/cryptogen generate --config=./crypto-config.yaml
 
-###2.configtx.yaml
+### 2.configtx.yaml
 
 ./bin/configtxgen -profile OrdererGenesis -outputBlock ./config/genesis.block -channelID channelbadge1
 ./bin/configtxgen -profile Channel1 -outputCreateChannelTx ./config/channel1.tx -channelID channelbadge1
 ./bin/configtxgen -profile Channel1 -outputAnchorPeersUpdate ./config/LibraryOrganchors.tx -channelID channelbadge1 -asOrg LibraryOrg
 ./bin/configtxgen -profile Channel1 -outputAnchorPeersUpdate ./config/StudentOrganchors.tx -channelID channelbadge1 -asOrg StudentOrg
 
-###3.docker-compose.yaml
+### 3.docker-compose.yaml
 -터미널1
 docker-compose -f docker-compose.yaml up -d
 
@@ -29,14 +29,14 @@ docker exec -e "CORE_PEER_LOCALMSPID=StudentMSP" -e "CORE_PEER_MSPCONFIGPATH=/op
 
 
 
-##설정
+## 설정
 
-###조직
+### 조직
 
 LibraryOrg peer0, peer1
 StudentOrg peer0, peer1
 
-###채널
+### 채널
 
 프로필 이름 : Channel1
 ID : channelbadge1
