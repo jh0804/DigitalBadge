@@ -11,8 +11,11 @@ export FABRIC_CFG_PATH=$PWD
 ### 2.configtx.yaml
 
 ./bin/configtxgen -profile OrdererGenesis -outputBlock ./config/genesis.block -channelID channelbadge1
+
 ./bin/configtxgen -profile Channel1 -outputCreateChannelTx ./config/channel1.tx -channelID channelbadge1
+
 ./bin/configtxgen -profile Channel1 -outputAnchorPeersUpdate ./config/LibraryOrganchors.tx -channelID channelbadge1 -asOrg LibraryOrg
+
 ./bin/configtxgen -profile Channel1 -outputAnchorPeersUpdate ./config/StudentOrganchors.tx -channelID channelbadge1 -asOrg StudentOrg
 
 ### 3.docker-compose.yaml
