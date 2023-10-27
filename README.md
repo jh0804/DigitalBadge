@@ -20,6 +20,7 @@ export FABRIC_CFG_PATH=$PWD
 
 ### 3.docker-compose.yaml
 -터미널1
+
 docker-compose -f docker-compose.yaml up -d
 
 docker exec -it badge_cli bash
@@ -27,6 +28,7 @@ docker exec -it badge_cli bash
 peer channel create -o orderer1.libBadge.com:7050 -c channelbadge1 -f /etc/hyperledger/configtx/channel1.tx
 
 -터미널2
+
 docker exec -e "CORE_PEER_LOCALMSPID=StudentMSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/student.libBadge.com/users/Admin@student.libBadge.com/msp" -e "CORE_PEER_ADDRESS=peer0.student.libBadge.com:7051" -it badge_cli bash
 
 
