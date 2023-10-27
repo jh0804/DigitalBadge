@@ -1,12 +1,13 @@
-version: '2'
+version: '3.7'
 
 networks:
-  libBadgeNetwork:
+  badgeNetwork:
 
 services:
-  orderer.libBadge.com:
-    container_name: orderer.libBadge.com
-    image: hyperledger/fabric-orderer:2.5
+#orderer1~3
+  orderer1.libBadge.com:
+    container_name: orderer1.libBadge.com
+    image: hyperledger/fabric-orderer:latest
     environment:
       - ORDERER_GENERAL_LOGLEVEL=debug
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
@@ -14,23 +15,59 @@ services:
       - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/genesis.block
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
       - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp/orderer/msp
-      #ENABLE TLS
-      - ORDERER_GENERAL_TLS_ENABLED=true
-      - ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/msp/orderer/tls/server.key
-      - ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/msp/orderer/tls/server.crt
-      - ORDERER_GENERAL_TLS_ROOTCAS=[/etc/hyperledger/msp/orderer/tls/ca.crt]
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
     command: orderer
     ports:
       - 7050:7050
     volumes:
         - ./config/:/etc/hyperledger/configtx
-        - ./crypto-config/ordererOrganizations/libBadge.com/orderers/orderer.libBadge.com/:/etc/hyperledger/msp/orderer
+        - ./crypto-config/ordererOrganizations/libBadge.com/orderers/orderer1.libBadge.com/:/etc/hyperledger/msp/orderer
     networks:
-      - libBadgeNetwork
+      - badgeNetwork
+
+  orderer2.libBadge.com:
+    container_name: orderer2.libBadge.com
+    image: hyperledger/fabric-orderer:latest
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp/orderer/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
+    command: orderer
+    ports:
+      - 8050:7050
+    volumes:
+        - ./config/:/etc/hyperledger/configtx
+        - ./crypto-config/ordererOrganizations/libBadge.com/orderers/orderer2.libBadge.com/:/etc/hyperledger/msp/orderer
+    networks:
+      - badgeNetwork
+
+  orderer3.libBadge.com:
+    container_name: orderer3.libBadge.com
+    image: hyperledger/fabric-orderer:latest
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp/orderer/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
+    command: orderer
+    ports:
+      - 9050:7050
+    volumes:
+        - ./config/:/etc/hyperledger/configtx
+        - ./crypto-config/ordererOrganizations/libBadge.com/orderers/orderer3.libBadge.com/:/etc/hyperledger/msp/orderer
+    networks:
+      - badgeNetwork
+#peer
   peer0.library.libBadge.com:
     container_name: peer0.library.libBadge.com
-    image: hyperledger/fabric-peer:2.5
+    image: hyperledger/fabric-peer:latest
     environment:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_PEER_ID=peer0.library.libBadge.com
@@ -42,14 +79,12 @@ services:
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.library.libBadge.com:7051
       - CORE_PEER_GOSSIP_ENDPOINT=peer0.library.libBadge.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.library.libBadge.com:7051
-      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_libBadgeNetwork
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_GOSSIP_USELEADERELECTION=true
-      - CORE_PEER_GOSSIP_ORGLEADER=false
-      - CORE_PEER_PROFILE_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_badgeNetwork
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=capd1
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=capd1
+
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
@@ -61,12 +96,27 @@ services:
         - ./crypto-config/peerOrganizations/library.libBadge.com/users:/etc/hyperledger/msp/users
         - ./config:/etc/hyperledger/configtx
     depends_on:
-      - orderer.libBadge.com
+      - orderer1.libBadge.com
+      - orderer2.libBadge.com
+      - orderer3.libBadge.com
+      - couchdb1
     networks:
-      - libBadgeNetwork
+      - badgeNetwork
+
+  couchdb1:
+    container_name: couchdb1
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=capd1
+      - COUCHDB_PASSWORD=capd1
+    ports:
+      - 5984:5984
+    networks:
+      - badgeNetwork
+
   peer1.library.libBadge.com:
     container_name: peer1.library.libBadge.com
-    image: hyperledger/fabric-peer:2.5
+    image: hyperledger/fabric-peer:latest
     environment:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_PEER_ID=peer1.library.libBadge.com
@@ -75,7 +125,14 @@ services:
       - CORE_PEER_LOCALMSPID=LibraryMSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
       - CORE_PEER_ADDRESS=peer1.library.libBadge.com:7051
-      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_libBadgeNetwork
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.library.libBadge.com:7051
+      - CORE_PEER_GOSSIP_ENDPOINT=peer1.library.libBadge.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.library.libBadge.com:7051
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_badgeNetwork
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb2:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=capd2
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=capd2
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
@@ -87,14 +144,128 @@ services:
         - ./crypto-config/peerOrganizations/library.libBadge.com/users:/etc/hyperledger/msp/users
         - ./config:/etc/hyperledger/configtx
     depends_on:
-      - orderer.libBadge.com
+      - orderer1.libBadge.com
+      - orderer2.libBadge.com
+      - orderer3.libBadge.com      
+      - couchdb2
     networks:
-      - libBadgeNetwork
+      - badgeNetwork
+
+  couchdb2:
+    container_name: couchdb2
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=capd2
+      - COUCHDB_PASSWORD=capd2
+    ports:
+      - 6984:5984
+    networks:
+      - badgeNetwork
+
+  peer0.student.libBadge.com:
+    container_name: peer0.student.libBadge.com
+    image: hyperledger/fabric-peer:latest
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer0.student.libBadge.com
+      - CORE_LOGGING_PEER=debug
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_LOCALMSPID=StudentMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_ADDRESS=peer0.student.libBadge.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.student.libBadge.com:7051
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.student.libBadge.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.student.libBadge.com:7051
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_badgeNetwork
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb3:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=capd3
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=capd3
+
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: peer node start
+    ports:
+      - 19051:7051
+      - 19053:7053
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/student.libBadge.com/peers/peer0.student.libBadge.com/msp:/etc/hyperledger/msp/peer
+        - ./crypto-config/peerOrganizations/student.libBadge.com/users:/etc/hyperledger/msp/users
+        - ./config:/etc/hyperledger/configtx
+    depends_on:
+      - orderer1.libBadge.com
+      - orderer2.libBadge.com
+      - orderer3.libBadge.com   
+      - couchdb3
+    networks:
+      - badgeNetwork
+
+  couchdb3:
+    container_name: couchdb3
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=capd3
+      - COUCHDB_PASSWORD=capd3
+    ports:
+      - 7984:5984
+    networks:
+      - badgeNetwork
+
+  peer1.student.libBadge.com:
+    container_name: peer1.student.libBadge.com
+    image: hyperledger/fabric-peer:latest
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer1.student.libBadge.com
+      - CORE_LOGGING_PEER=debug
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_LOCALMSPID=StudentMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_ADDRESS=peer1.student.libBadge.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.student.libBadge.com:7051
+      - CORE_PEER_GOSSIP_ENDPOINT=peer1.student.libBadge.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.student.libBadge.com:7051
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_badgeNetwork
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb4:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=capd4
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=capd4
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: peer node start
+    ports:
+      - 11051:7051
+      - 11053:7053
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/student.libBadge.com/peers/peer1.student.libBadge.com/msp:/etc/hyperledger/msp/peer
+        - ./crypto-config/peerOrganizations/student.libBadge.com/users:/etc/hyperledger/msp/users
+        - ./config:/etc/hyperledger/configtx
+    depends_on:
+      - orderer1.libBadge.com
+      - orderer2.libBadge.com
+      - orderer3.libBadge.com   
+      - couchdb4
+    networks:
+      - badgeNetwork
+
+  couchdb4:
+    container_name: couchdb4
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=capd4
+      - COUCHDB_PASSWORD=capd4
+    ports:
+      - 8984:5984
+    networks:
+      - badgeNetwork
 
   cli:
-    container_name: libBadge_cli
-    image: hyperledger/fabric-tools
+    container_name: badge_cli
+    image: hyperledger/fabric-tools:latest
+    labels:
+      service: hyperledger-fabric
     tty: true
+    stdin_open: true
     environment:
       - GOPATH=/opt/gopath
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
@@ -102,18 +273,19 @@ services:
       - CORE_PEER_ID=cli
       - CORE_PEER_ADDRESS=peer0.library.libBadge.com:7051
       - CORE_PEER_LOCALMSPID=LibraryMSP
-      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/library.libBadge.com/users/Admin@library.libBadge.com/msp
+      - CORE_PEER_MSPCONFI+GPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/library.libBadge.com/users/Admin@library.libBadge.com/msp
       - CORE_CHAINCODE_KEEPALIVE=10
-      - CORE_PEER_PROFILE_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/home/ubuntu/digitalBadge/basic-network/crypto-config/peerOrganizations/library.libBadge.com/peers/peer0.library.libBadge.com/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/home/ubuntu/digitalBadge/basic-network/crypto-config/peerOrganizations/library.libBadge.com/peers/peer0.library.libBadge.com/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/home/ubuntu/digitalBadge/basic-network/crypto-config/peerOrganizations/library.libBadge.com/peers/peer0.library.libBadge.com/tls/ca.crt
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: /bin/bash
     volumes:
-      - /var/run/:/host/var/run/
-      - ./../chaincode/:/opt/gopath/src/chaincode/
-      - ./crypto-config:/etc/hyperledger/crypto-config
-      - ./config:/etc/hyperledger/configtx
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/chaincode/
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./config:/etc/hyperledger/configtx
+    depends_on:
+      - peer0.library.libBadge.com
+      - peer0.student.libBadge.com
+      - peer1.library.libBadge.com
+      - peer1.student.libBadge.com
     networks:
-      - libBadgeNetwork
+      - badgeNetwork
