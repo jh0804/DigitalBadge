@@ -1,4 +1,5 @@
 // 배지 관련 코드
+// UpdateUserCount 함수 수정필요 >> 조직간(학생, 도서관) 합의하에 Count 증가되도록
 package main
 
 import (
