@@ -56,7 +56,7 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 // CreateBogo는 Bogo를 생성하고 BogoNo를 자동으로 증가시킵니다.
 func (s *SmartContract) CreateBogo(ctx contractapi.TransactionContextInterface, title string, author string, publisher string, report string, owner string) (int, error) {
 	
-	var bogoNo int
+	//var bogoNo int
 	
 	// BogoNo 카운터를 읽어오기
 	assetCounterJSON, err := ctx.GetStub().GetState("BogoNoCounter")
@@ -71,8 +71,12 @@ func (s *SmartContract) CreateBogo(ctx contractapi.TransactionContextInterface, 
 			return 0, fmt.Errorf("failed to unmarshal BogoNoCounter. %v", err)
 		}
 	}
+	
+	(실제 BogoNo=1부터 시작)
+	assetCounter.Counter++
+	bogoNo := assetCounter.Counter
 
-	// Bogo 생성 (BogoNo=0부터 시작)
+	// Bogo 생성 (실제 BogoNo=1부터 시작)
 	bogo := Bogo{
 		BogoNo:    assetCounter.Counter,
 		Title:     title,
