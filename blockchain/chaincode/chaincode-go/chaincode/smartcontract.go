@@ -72,7 +72,7 @@ func (s *SmartContract) CreateBogo(ctx contractapi.TransactionContextInterface, 
 		}
 	}
 	
-	(실제 BogoNo=1부터 시작)
+	//실제 BogoNo=1부터 시작
 	assetCounter.Counter++
 	bogoNo := assetCounter.Counter
 
