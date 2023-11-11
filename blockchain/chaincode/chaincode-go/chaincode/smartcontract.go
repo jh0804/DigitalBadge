@@ -438,15 +438,6 @@ func getHighestBadgeLevel(badges []*Badge) int {
 	return highestLevel
 }
 
-// getBadgeLevel 함수: 배지의 레벨을 정수로 반환
-func getBadgeLevel(badge *Badge) int {
-	level, err := strconv.Atoi(badge.Level)
-	if err != nil {
-		return 0
-	}
-	return level
-}
-
 // GetBadgeByBadgeNo 함수: badgeNo를 기준으로 특정 배지를 조회
 func (s *SmartContract) GetBadgeByBadgeNo(ctx contractapi.TransactionContextInterface, badgeNo int) (*Badge, error) {
 	badgeKey := fmt.Sprintf(badgeKeyFormat, badgeNo)
