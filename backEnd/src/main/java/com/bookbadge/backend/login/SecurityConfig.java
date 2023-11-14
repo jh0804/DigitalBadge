@@ -13,7 +13,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity //spring security 설정을 활성화시켜주는 어노테이션
 @RequiredArgsConstructor //final 필드 생성자 만들어줌
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    // @author 황승주
+ 
     private final OAuthService oAuthService;
 
     @Override
@@ -24,8 +24,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout().logoutSuccessUrl("/") //logout 요청시 홈으로 이동 - 기본 logout url = "/logout"
                 .and()
+                .authorizeRequests()
+                .antMatchers("/student/**").hasRole(Role.STUDENT.name())
+                .antMatchers("/library/**").hasRole(Role.LIBRARY.name()) 
+                .antMatchers("/member/update").permitAll()
+                .anyRequest().authenticated()
+                .and()
                 .oauth2Login() //OAuth2 로그인 설정 시작점
-                .defaultSuccessUrl("/api/oauth/info", true) //OAuth2 성공시 redirect(토큰 생성)
+                .defaultSuccessUrl("/update-info", true) //OAuth2 성공시 redirect(토큰 생성)///api/oauth/info
                 .userInfoEndpoint() //OAuth2 로그인 성공 이후 사용자 정보를 가져올 때 설정 담당
                 .userService(oAuthService); //OAuth2 로그인 성공 시, 작업을 진행할 MemberService
     }
