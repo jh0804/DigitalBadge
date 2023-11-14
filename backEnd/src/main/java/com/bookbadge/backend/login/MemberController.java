@@ -17,7 +17,7 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<MemberResponseDto> updateMember(@RequestBody MemberRequestDto memberRequestDto) {
 
         String email = memberRequestDto.getEmail();
