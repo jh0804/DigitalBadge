@@ -1,3 +1,5 @@
+<!-- 로그인 화면 -->
+
 <template>
   <div className="AndroidLarge1">
       <img class="pknu_logo" :src="require('@/assets/white_logo.png')">
@@ -5,9 +7,9 @@
       <a href="googleOAuthUrl">
       <img class="google_login" :src="require('@/assets/sign_google.png')"/>
       </a>
+      
         <nav>
-      <!-- <router-link to="/">Home</router-link> | -->
-    <router-link to="/about">메인 화면</router-link>
+    <router-link to="/member/update">메인 화면</router-link>
   </nav>
   <router-view/>
   </div>
@@ -16,8 +18,9 @@
 <script>
 export default{
 computed:{
+  // axios.post('https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&client_id=682858095425-cithjug9d5i265s3npr1m78jmhg95lmq.apps.googleusercontent.com&scope=profile email&state=EFKjA32UrTx63Bs5wRIDqkE72JZyS_CiFjtVtAqLCY8%3D&redirect_uri=http%3A%2F%2Flocalhost%3A8082%2Flogin%2Foauth2%2Fcode%2Fgoogle&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow').then().catch();
   googleOAuthUrl() {
-      return `https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.email&response_type=code&client_id=${this.client_id}&redirect_uri=${this.redirect_uri}`;
+      return `https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&client_id=682858095425-cithjug9d5i265s3npr1m78jmhg95lmq.apps.googleusercontent.com&scope=profile email&state=EFKjA32UrTx63Bs5wRIDqkE72JZyS_CiFjtVtAqLCY8%3D&redirect_uri=http%3A%2F%2Flocalhost%3A8082%2Flogin%2Foauth2%2Fcode%2Fgoogle&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow`;
   },
 },
 };
