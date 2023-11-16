@@ -19,8 +19,9 @@ import java.util.Date;
 @Service
 public class JwtService {
     
-    @Value("${io.jsonwebtoken.jjwt.token-secret-key}")
+    @Value("${spring.jwt.secret}")
     private String secretKey;
+
     //10분
     static final long ACCESS_PERIOD = 1000L * 60L * 10L;
     //3달

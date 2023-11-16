@@ -1,4 +1,4 @@
-package com.bookbadge.backend.login;
+package com.bookbadge.backend.member;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,7 +40,9 @@ public class Member {
     @Column(name = "refreshToken", unique = true)
     private String refreshToken;
 
-        @Builder //생성을 Builder 패턴으로 하기 위해서
+
+
+    @Builder //생성을 Builder 패턴으로 하기 위해서
     public Member(Long id, String name, String email, String provider) {
         this.id = id;
         this.name = name;

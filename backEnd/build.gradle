@@ -24,6 +24,7 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.projectlombok:lombok'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -53,7 +54,13 @@ dependencies {
 	implementation 'org.slf4j:slf4j-api:1.7.32' 
 	implementation 'ch.qos.logback:logback-classic:1.2.6' 
 
-	implementation 'org.hyperledger.fabric:fabric-gateway-java:2.2.0'
+	//implementation 'org.hyperledger.fabric:fabric-gateway-java:2.2.0'
+	//implementation 'com.google.guava:guava:29.0-jre'
+
+	implementation 'org.hyperledger.fabric:fabric-gateway:1.4.0'
+    compileOnly 'io.grpc:grpc-api:1.59.0'
+    runtimeOnly 'io.grpc:grpc-netty-shaded:1.59.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 tasks.named('test') {

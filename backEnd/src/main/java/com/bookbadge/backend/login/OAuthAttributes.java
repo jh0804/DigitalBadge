@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
+import com.bookbadge.backend.member.MemberProfile;
+
 public enum OAuthAttributes {
     GOOGLE("google", (attributes) -> {
         MemberProfile memberProfile = new MemberProfile();

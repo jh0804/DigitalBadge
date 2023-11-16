@@ -23,7 +23,8 @@ type Bogo struct {
 	Author    string `json:"Author"`
 	Publisher string `json:"Publisher"`
 	Report    string `json:"Report"`
-	Owner     string `json:"Owner"`    //독후감 작성자 - 이메일(=id 역할)입력되도록?
+	OwnerId   string `json:"OwnerId"` //독후감 작성자 - 이메일(=id 역할)입력되도록?
+	OwnerName string `json:"OwnerName"`
 	Approved  bool   `json:"Approved"` //초기 create시 false
 }
 
@@ -70,7 +71,7 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 }
 
 // CreateBogo: Bogo 생성
-func (s *SmartContract) CreateBogo(ctx contractapi.TransactionContextInterface, title string, author string, publisher string, report string, owner string) (int, error) {
+func (s *SmartContract) CreateBogo(ctx contractapi.TransactionContextInterface, title string, author string, publisher string, report string, ownerId string, ownerName string) (int, error) {
 
 	// BogoNo 카운터를 읽어오기
 	assetCounterJSON, err := ctx.GetStub().GetState("BogoNoCounter")
@@ -97,7 +98,8 @@ func (s *SmartContract) CreateBogo(ctx contractapi.TransactionContextInterface, 
 		Author:    author,
 		Publisher: publisher,
 		Report:    report,
-		Owner:     owner,
+		OwnerId:   ownerId,
+		OwnerName: ownerName,
 		Approved:  false,
 	}
 
@@ -226,7 +228,7 @@ func (s *SmartContract) GetAllBogos(ctx contractapi.TransactionContextInterface)
 }
 
 // GetBogosByOwner 함수: owner를 기준으로 bogo 조회
-func (s *SmartContract) GetBogosByOwner(ctx contractapi.TransactionContextInterface, owner string) ([]*Bogo, error) {
+func (s *SmartContract) GetBogosByOwner(ctx contractapi.TransactionContextInterface, ownerId string) ([]*Bogo, error) {
 	resultsIterator, err := ctx.GetStub().GetStateByRange("", "")
 	if err != nil {
 		return nil, err
@@ -247,7 +249,7 @@ func (s *SmartContract) GetBogosByOwner(ctx contractapi.TransactionContextInterf
 		}
 
 		// Owner 필드가 원하는 값과 일치하는 경우에만 추가
-		if bogo.Owner == owner {
+		if bogo.OwnerId == ownerId {
 			bogos = append(bogos, &bogo)
 		}
 	}
@@ -394,7 +396,7 @@ func (s *SmartContract) IssueBadge(ctx contractapi.TransactionContextInterface, 
 }
 
 // GetBogosByOwnerAndApproval 함수: owner를 기준으로 bogo 조회 (Approval 상태에 따라 필터링)
-func (s *SmartContract) GetBogosByOwnerAndApproval(ctx contractapi.TransactionContextInterface, owner string) ([]*Bogo, error) {
+func (s *SmartContract) GetBogosByOwnerAndApproval(ctx contractapi.TransactionContextInterface, ownerId string) ([]*Bogo, error) {
 	resultsIterator, err := ctx.GetStub().GetStateByRange("", "")
 	if err != nil {
 		return nil, err
@@ -415,14 +417,13 @@ func (s *SmartContract) GetBogosByOwnerAndApproval(ctx contractapi.TransactionCo
 		}
 
 		// 필터링: owner가 일치하고 Approved 상태가 true인 Bogo만 반환
-		if bogo.Owner == owner && bogo.Approved {
+		if bogo.OwnerId == ownerId && bogo.Approved {
 			bogos = append(bogos, &bogo)
 		}
 	}
 
 	return bogos, nil
 }
-
 
 // getHighestBadgeLevel 함수: 가장 높은 단계의 배지 레벨을 찾아서 반환
 func getHighestBadgeLevel(badges []*Badge) int {

@@ -10,6 +10,9 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import com.bookbadge.backend.member.Member;
+import com.bookbadge.backend.member.MemberProfile;
+import com.bookbadge.backend.member.MemberRepository;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

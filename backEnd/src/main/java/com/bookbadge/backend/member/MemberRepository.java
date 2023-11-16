@@ -1,4 +1,4 @@
-package com.bookbadge.backend.login;
+package com.bookbadge.backend.member;
 
 import java.util.Optional;
 
