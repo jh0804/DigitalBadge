@@ -60,6 +60,10 @@ import java.security.cert.CertificateException;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Arrays;
+
 
 @Service
 public class StudentService {
@@ -108,14 +112,14 @@ public class StudentService {
                 MSP_ID, CRYPTO_PATH, TLS_CERT_PATH, KEY_DIR_PATH, CERT_PATH, PEER_ENDPOINT, OVERRIDE_AUTH
             );
     
+            //InitLedger 최초 실행
             if(!initialized){
                 byte[] initResult = contract.submitTransaction("InitLedger");
                 initialized = true;
             }
-            // Assuming your smart contract returns an ID or some data after creation
+
             byte[] result = contract.submitTransaction("CreateBogo", title, author, publisher, report, ownerId, ownerName);
     
-            // Convert the result to an appropriate type based on your smart contract response
             String resultAsString = new String(result, StandardCharsets.UTF_8);
             int bogoNo = Integer.parseInt(resultAsString);
     
@@ -130,27 +134,48 @@ public class StudentService {
 /* 
     //Badge 목록 Recipient 기준 조회 
     ////chaincode - GetBadgesByRecipient / evaluateTransaction(peer chaincode query)
-    public ResponseEntity<Map<String, Object>> getBadgeList(MemDto memDto){
+    public ResponseEntity<Map<String, Object>> getBadgeList(MemDto memDto) {
         Map<String, Object> result = new HashMap<>();
-
+    
         List<Badge> badgeList;
-
+    
         Member member = memDto.toEntity();
-
+    
         String email = member.getEmail();
         String name = member.getName();
-
-        badgeList = contract.evaluateTransaction("GetBadgesByRecipient", email, name);
+    
+        Stu stu = stuRepository.findByMember_Email(email)
+                .orElseThrow(() -> new RuntimeException("There is no stu information corresponding to email " + email));
+    
+        Long stuNo = stu.getId();
+    
+        Path KEY_DIR_PATH = CRYPTO_PATH.resolve(Paths.get("users/user" + stuNo + "@org1.libBadge.com/msp/keystore"));
+        Path CERT_PATH = CRYPTO_PATH.resolve(Paths.get("users/user" + stuNo + "@org1.libBadge.com/msp/signcerts/cert.pem"));
+    
+        Contract contract = HyperledgerFabricGateway.initializeContract(
+                MSP_ID, CRYPTO_PATH, TLS_CERT_PATH, KEY_DIR_PATH, CERT_PATH, PEER_ENDPOINT, OVERRIDE_AUTH
+        );
+    
+        byte[] queryResult = contract.evaluateTransaction("GetBadgesByRecipient", email, name);
+        
+        // Convert the byte array result to a list of badges
+        try {
+            badgeList = Arrays.asList(OBJECT_MAPPER.readValue(queryResult, Badge[].class));
+        } catch (IOException e) {
+            throw new RuntimeException("Error converting byte array to Badge list", e);
+        }
+    
         List<BadgeResponseDto> badgeResponseDtoList = new ArrayList<>();
-                for (Badge badge : badgeList) {
-                    BadgeResponseDto dto = new BadgeResponseDto(badge);
-                    badgeResponseDtoList.add(dto);
-                }
-
+        for (Badge badge : badgeList) {
+            BadgeResponseDto dto = new BadgeResponseDto(badge);
+            badgeResponseDtoList.add(dto);
+        }
+    
         result.put("list", badgeResponseDtoList);
-
+    
         return ResponseEntity.ok(result);
     }
+    
 
 
     //Badge badgeBo 기준으로 상세 조회
@@ -160,6 +185,6 @@ public class StudentService {
 
         return new BadgeResponseDto(badge);
     }
-
 */
+
 }
