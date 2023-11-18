@@ -1,17 +1,16 @@
 <!-- 학생 메인 화면 -->
 
 <template>
-  <div class="main">
-    <div className="badge_box">
-    </div>
-    <!-- badge jason에서 받아와서 입력 -->
-    <router-link to="/Badge_info" className="badge" style="width: 78px; height: 90px; left: 52px; top: 424px; position: absolute; background: #D9D9D9; border-radius: 6px">
-      <li v-for="badge in badgeList" :key="badge">
-        <img :src="require(badge.img)"  alt="Badge Image">
-        <span>{{ badge.name }}</span>
-      </li>
+  <div class="main" >
+    <div className="badge_box" style="display: flex; justify-content: space-around; flex-wrap: wrap; ">
+  <!-- badge jason에서 받아와서 입력 -->
+  <div v-for="badge in badgeList" :key="badge.id" @click="navigateToBadge(badge.id)" style="margin: 10px;">
+    <router-link :to="'/Badge_info/' + badge.id" className="badge" style="width: 78px; height: 90px;">
+      <img :src="badge.img" alt="Badge Image" style="width: 78px; height: 100px;"/>
+      <p style="color: black; font-size: 14px; ">{{ badge.name }}</p>
     </router-link>
-      <div style="width: 83px; height: 25px; left: 48px; top: 523px; position: absolute; text-align: center; color: #4D4D4D; font-size: 16px; font-family: Inter; font-weight: 700; word-wrap: break-word">배지 이름</div>
+  </div>
+</div>
      <div className="Rectangle3">
       <div className="Rectangle4"></div>
       <div className="Rectangle5"></div>
@@ -19,44 +18,48 @@
       <div style="width: 135px; height: 28px; left: 133px; top: 200px; position: absolute; color: black; font-size: 18px; font-family: Inter; font-weight: 700; word-wrap: break-word">이름</div>
       <div style="width: 115px; height: 20px; left: 141px; top: 234px; position: absolute; color: #686868; font-size: 15px; font-family: Inter; font-weight: 700; word-wrap: break-word">학번</div>
       <div style="width: 115px; height: 20px; left: 141px; top: 264px; position: absolute; color: #686868; font-size: 15px; font-family: Inter; font-weight: 700; word-wrap: break-word">학과</div>
-
-        <!-- 밑에 버튼 누르면 데이터 베이스로 데이터 보내지게 해야 함 -->
-        <button @click="modalOpen = false" style=" width: 70px; height:40px; top: 0px; position: relative; background: #507BBC; border-radius: 20px; border:none; text-align: center; " class="modal-exit-btn">
-          <h4 style="color : white; text-align: center; ">확인</h4>
-        </button>
       </div>
     </div>
     <img class="PknuLogo1" :src="require('@/assets/pknu_logo.png')"/>
-    <router-link to="/activity/report" style=" text-align: center;" class="reporterbtn"> 
-    <h4 style="color:white; font-family: Inter; font-weight: 700; word-wrap: break-word;" >활동 보고</h4>
+    <router-link to="/activity/report" style=" text-align: center;" class="reporterbtn1"> 
+    <h4 style="color:white; font-family:'nago'; font-weight: 700; text-align: center; word-wrap: break-word;" >활동 보고</h4>
   </router-link>
 </template>
 
 <script>
-import badge_data from '@/assets/badge.json';
+import badge_data from '@/assets/badge.js';
 
 export default {
   data() {
     return {
       badgeList : badge_data,
-    };
+    };        
 },
-
 methods: {
-  submitForm2() {
-    console.log('dd');
+    navigateToBadge(badgeId) {
+      // 예시: 해당 라우터로 이동하는 코드
+      // 실제로는 적절한 라우터로 이동하는 로직을 추가해야 합니다.
+      this.$router.push({ name: '/Badge_info', params: { id: badgeId } });
+    },
   },
-},
+
 };
 
 </script>
 
 <style>
+@font-face{
+  font-family: 'nanumgothic';
+  src: url('@/assets/fonts/NanumGothic.ttf');
+}
 .main
 {width: 360px;
 height: 800px;
 background: #f2f2f2;
+font-family: 'nanumgothic';
+font-weight: 600;
 }
+
 .Rectangle3{
   width: 360px;
   height: 369px; 
@@ -92,12 +95,12 @@ background: #f2f2f2;
 .badge_box{
   width: 317px;
   height: 321px;
-  left: 21px;
+  left: 24px;
   top: 386px;
   position: absolute;
   background: white;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
-  border-radius: 19px;
+  border-radius: 20px;
 }
 .black-bg {
   display: flex;
@@ -124,14 +127,17 @@ background: #f2f2f2;
 .modal-exit-btn:hover {
   cursor: pointer;
 }
-.reporterbtn{
+.reporterbtn1{
   width: 317px;
-  height: 49px;
+  height: 50px;
   left: 21px;
   top: 726px;
   position: absolute;
   background: #507BBC;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 11px
+  border-radius: 50px;
+  text-align: center;
 }
+
+
 </style>
