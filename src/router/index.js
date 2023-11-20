@@ -1,5 +1,8 @@
+// index.js
+
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import UpdateView from '../views/updateView.vue';
 
 const routes = [
   {
@@ -35,11 +38,8 @@ const routes = [
   {
     //정보수정 페이지임
     path: '/main',
-    name: '/main',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "bogoseo" */ '../views/updateView.vue')
+    name: 'Main',
+    component: UpdateView,
   },
   {
     path: '/admin/main',
@@ -50,7 +50,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/ad_AboutView.vue')
   },
   {
-    path: '/admin/report',
+    path: '/admin/report/:id',
     name: '/admin/report',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route

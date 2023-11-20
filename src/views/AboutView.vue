@@ -13,36 +13,67 @@
 </div>
      <div className="Rectangle3">
       <div className="Rectangle4"></div>
-      <div className="Rectangle5"></div>
-      <!-- 여기서부터 세개는 입력받는 데이터 -->
-      <div style="width: 135px; height: 28px; left: 133px; top: 200px; position: absolute; color: black; font-size: 18px; font-family: Inter; font-weight: 700; word-wrap: break-word">이름</div>
-      <div style="width: 115px; height: 20px; left: 141px; top: 234px; position: absolute; color: #686868; font-size: 15px; font-family: Inter; font-weight: 700; word-wrap: break-word">학번</div>
-      <div style="width: 115px; height: 20px; left: 141px; top: 264px; position: absolute; color: #686868; font-size: 15px; font-family: Inter; font-weight: 700; word-wrap: break-word">학과</div>
+      <div >
+        <img class="profile_pic" :src="require('@/assets/profile.jpg')"/>
+      </div>
+      <!-- 여기서부터 세개는 서버에서 입력받는 데이터 -->
+      <div style="width: 135px; height: 28px; left: 133px; top: 213px; position: absolute; color: black; font-size: 20px; font-family: nanumgothic; font-weight: 900; word-wrap: break-word">{{ name }}</div>
+      <div style="width: 140px; height: 20px; left: 160px; top: 236px; position: absolute; color: #b3b3b3; font-size: 11px; font-family: Inter; font-style: italic; font-weight: 600; word-wrap: break-word">{{ email }}</div>
+      <div style="width: 115px; height: 20px; left: 156px; top: 264px; position: absolute; color: #686868; font-size: 16px; font-family: Inter; font-weight: 700; word-wrap: break-word">{{ roleId }}</div>
       </div>
     </div>
     <img class="PknuLogo1" :src="require('@/assets/pknu_logo.png')"/>
-    <router-link to="/activity/report" style=" text-align: center;" class="reporterbtn1"> 
-    <h4 style="color:white; font-family:'nago'; font-weight: 700; text-align: center; word-wrap: break-word;" >활동 보고</h4>
+    <router-link to="/activity/report" class="reporterbtn1"> 
+    <h4 style="color:white; font-family:nanumgothic; font-weight: 700; text-align: center; word-wrap: break-word;" >활동 보고</h4>
   </router-link>
 </template>
 
 <script>
 import badge_data from '@/assets/badge.js';
+import axios from 'axios';
 
 export default {
   data() {
     return {
       badgeList : badge_data,
-    };        
+      name: '김규린',
+      email: 'gyurin00@gmail.com',
+      roleId: '201912345',
+      badgeId: null, // 새로운 badgeId 추가
+    };  
+  },
+  mounted() {
+    this.fetchUserInfo();          
 },
 methods: {
+  async fetchUserInfo() {
+      try {
+        const response = await axios.get('https://reqres.in/api/users?/page=2'); // 실제 API 엔드포인트로 대체
+        const userData = response.data; // 서버가 사용자 정보를 담은 객체를 반환한다고 가정
+        this.name = userData.name ||'axios';
+        this.email = userData.email || '201900000@pukyong.ac.kr2';
+        this.roleId = userData.roleId || '2019000002';
+        this.badgeId = userData.badgeId || null;
+      } catch (error) {
+        console.error('사용자 정보를 불러오는 중 오류 발생:', error);
+        // 오류 처리, 사용자에게 메시지 표시 등을 수행합니다.
+      }
+    },
+    updateBadgeList() {
+      if (this.badgeId) {
+        // badgeId가 존재할 경우, 해당 ID에 맞는 배지 정보 가져오기
+        const selectedBadge = badge_data.find(badge => badge.id === this.badgeId);
+        if (selectedBadge) {
+          // 선택한 배지 정보가 존재하면 badgeList 업데이트
+          this.badgeList = [selectedBadge];
+        }
+      }
+    },
     navigateToBadge(badgeId) {
       // 예시: 해당 라우터로 이동하는 코드
-      // 실제로는 적절한 라우터로 이동하는 로직을 추가해야 합니다.
       this.$router.push({ name: '/Badge_info', params: { id: badgeId } });
     },
   },
-
 };
 
 </script>
@@ -76,13 +107,14 @@ font-weight: 600;
   background: white; 
   border-radius: 12px;
 }
-.Rectangle5{
+.profile_pic{
   width: 123px; 
   height: 140px; 
   left: 48px; 
   top: 156px; 
   position: absolute; 
-  background: #D9D9D9;
+  border: 1px;
+  border-color: #507BBC;
 }
 .PknuLogo1
 {
