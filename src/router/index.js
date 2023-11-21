@@ -3,12 +3,26 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import UpdateView from '../views/updateView.vue';
+import FirstView from '../views/FirstView.vue';
+import SecondView from '../views/SecondView.vue';
+
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'Intro',
+    component: SecondView,
+  },
+  {
+    path: '/first',
+    name: 'first',
+    component: FirstView,
+  },
+  {
+    //있어빌리티 페이지
+    path: '/login',
+    name: 'login',
+    component: HomeView,
   },
   {
     path: '/student/main',
@@ -72,7 +86,8 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/tempView.vue')
-  }
+  },
+
 ]
 
 const router = createRouter({

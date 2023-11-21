@@ -1,121 +1,81 @@
-<!-- 관리자 메인화면 -->
+<!-- 관리자 메인 화면 -->
 
 <template>
-    <div class="main">  
-       <div className="Rectangle3 ">
-        <div className="Rectangle4"></div>
-        <div className="Rectangle5"></div>
+    <div class="main">
+      <div class="Rectangle3">
+        <div class="Rectangle4">
+        <!-- axios로 부터 받아온 사용자 정보 -->
+        <img class="icon" :src="require('@/assets/User.png')" style="width: 24px; height: 24px; left: -112px; top: 35px; position: relative;"/>
+        <h3 style="position: relative; top: -5px; left:-48px; font-size: 16px; color: cornflowerblue;">도서관 관리자</h3>
         <div class="ad_name">{{ name }}</div>
-      <div style="width: 115px; height: 20px; left: 160px; top: 236px; position: absolute; color: #b3b3b3; font-size: 11px; font-family: Inter; font-style: italic; font-weight: 600; word-wrap: break-word">{{ email }}</div>
-      <div style="width: 115px; height: 20px; left: 156px; top: 264px; position: absolute; color: #686868; font-size: 16px; font-family: Inter; font-weight: 700; word-wrap: break-word">{{ studentNumber }}</div>
-
+        <div style="width: 120px; height: 20px; left: 32px; top: 0px; position:relative; color: #b3b3b3; font-size: 11px; font-family: Inter; font-style: italic; font-weight: 600; word-wrap: break-word">{{ email }}</div>
+        <div style="width: 115px; height: 20px; left: 17px; top: 0px; position: relative; color: #686868; font-size: 16px; font-family: Inter; font-weight: 700; word-wrap: break-word">{{ studentNumber }}</div>
+    </div> 
     </div>
-    <img class="PknuLogo1" :src="require('@/assets/pknu_logo.png')"/>
-    <div class="Group1" style="width: 317px; height: 442px; left: 0px; top: 0px; position: relative;">  
-    
-
-      <div class="Rectangle10" style="width: 100%; height: 100%; relative; background: white; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25); border-radius: 19px">
-   
-    <div v-for="book in filteredBadgeList" :key="book.id" @click="navigateToBadge(book.id)" style="margin: 10px;">
-        <router-link :to="'/admin/report/' + book.id" class="book" style="width: 78px; height: 90px;">
-          <p style="color: black; font-size: 14px; ">{{ book.name }}</p>          
-        </router-link>
-      </div>
-
-<!-- 여기서부터는 백엔드 연결되면 지워도 됨둥 -->
-<router-link to="/admin/report" style="width: 76.84px; left: 0.18px; position: absolute; text-align: center; color: #507BBC; font-size: 15px; font-family: Inter; font-weight: 700; word-wrap: break-word">
-          <div class="Rectangle17" style="width: 260px; height: 50px; left: 20px; top: 58px; position: absolute; background: #EFEFEF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25); border-radius: 11px"></div>
-          <div class="Oo20xxxxxxx" style="width: 193px; height: 25px; left: 0px; top: 33px; position: absolute; color: #4D4D4D; font-size: 16px; font-family: Inter; font-weight: 500; word-wrap: break-word">김OO | 20XXXXXXX</div>
-          <div style="width: 170px; height: 25px; left: 20px; top: 75px; position: absolute; text-align: center; color: #4D4D4D; font-size: 16px; font-family: Inter; font-weight: 700; word-wrap: break-word">어린왕자를 읽고</div>
-        </router-link>
- 
-        <router-link to="/admin/report" style="width: 76.84px; left: 0.18px; position: absolute; text-align: center; color: #507BBC; font-size: 15px; font-family: Inter; font-weight: 700; word-wrap: break-word">
-          <div class="Rectangle18" style="width: 260px; height: 50px; left: 20px; top: 167px; position: absolute; background: #EFEFEF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25); border-radius: 11px"></div>
-          <div class="Oo20xxxxxxx" style="width: 193px; height: 25px; left: 0px; top: 142px; position: absolute; color: #4D4D4D; font-size: 16px; font-family: Inter; font-weight: 500; word-wrap: break-word">이OO | 20XXXXXXX</div>
-          <div style="width: 170px; height: 25px; left: 20px; top: 184px; position: absolute; text-align: center; color: #4D4D4D; font-size: 16px; font-family: Inter; font-weight: 700; word-wrap: break-word">백설공주를 읽고</div>
-        </router-link>
-
-        <router-link to="/admin/report" style="width: 76.84px; left: 0.18px; position: absolute; text-align: center; color: #507BBC; font-size: 15px; font-family: Inter; font-weight: 700; word-wrap: break-word">
-          <div class="Rectangle19" style="width: 260px; height: 50px; left: 20px; top: 276px; position: absolute; background: #EFEFEF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25); border-radius: 11px"></div>
-          <div class="Oo20xxxxxxx" style="width: 193px; height: 25px; left: 0px; top: 251px; position: absolute; color: #4D4D4D; font-size: 16px; font-family: Inter; font-weight: 500; word-wrap: break-word">박OO | 20XXXXXXX</div>
-          <div style="width: 170px; height: 25px; left: 10px; top: 293px; position: absolute; text-align: center; color: #4D4D4D; font-size: 16px; font-family: Inter; font-weight: 700; word-wrap: break-word">1984를 읽고</div>
-        </router-link> 
-
-      
-        <router-link to="/admin/report" style="width: 76.84px; left: 0.18px; position: absolute; text-align: center; color: #507BBC; font-size: 15px; font-family: Inter; font-weight: 700; word-wrap: break-word">
-          <div class="Rectangle20" style="width: 260px; height: 50px; left: 20px; top: 385px; position: absolute; background: #EFEFEF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25); border-radius: 11px"></div>
-          <div class="Oo20xxxxxxx" style="width: 193px; height: 25px; left: 0px; top: 360px; position: absolute; color: #4D4D4D; font-size: 16px; font-family: Inter; font-weight: 500; word-wrap: break-word">박OO | 20XXXXXXX</div>
-          <div style="width: 170px; height: 25px; left: 10px; top: 402px; position: absolute; text-align: center; color: #4D4D4D; font-size: 16px; font-family: Inter; font-weight: 700; word-wrap: break-word">1984를 읽고</div>
-        </router-link> 
-
-            
-        <router-link to="/admin/report" style="width: 76.84px; left: 0.18px; position: absolute; text-align: center; color: #507BBC; font-size: 15px; font-family: Inter; font-weight: 700; word-wrap: break-word">
-          <div class="Rectangle21" style="width: 260px; height: 50px; left: 20px; top: 494px; position: absolute; background: #EFEFEF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25); border-radius: 11px"></div>
-          <div class="Oo20xxxxxxx" style="width: 193px; height: 25px; left: 0px; top: 469px; position: absolute; color: #4D4D4D; font-size: 16px; font-family: Inter; font-weight: 500; word-wrap: break-word">박OO | 20XXXXXXX</div>
-          <div style="width: 170px; height: 25px; left: 10px; top: 511px; position: absolute; text-align: center; color: #4D4D4D; font-size: 16px; font-family: Inter; font-weight: 700; word-wrap: break-word">1984를 읽고</div>
-        </router-link> 
+      <img class="PknuLogo1" :src="require('@/assets/pknu_logo.png')" />
+      <div class="Group1" style="width: 317px; height: 442px; left: 0px; top: -5px; position: relative;">
+        <!-- approval이 false인 책 리스트 -->
+        <div class="Rectangle10" style="width: 100%; height: 100%; relative; background: white; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25); border-radius: 19px">
+          <div v-for="book in filtered_reportList" :key="book.id" style="margin: 10px;">
+            <router-link :to="'/admin/report/'+ book.id" class="book">
+              <div class="student_info" >{{ book.name }} | {{ book.roleId }}</div>
+              <div class="Rectangle21" style="width: 260px; height: 50px; left: 10px; top:0px; position:relative; background: #EFEFEF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25); border-radius: 11px">
+              <div class="book_title">{{ book.title }}</div>
+            </div>
+            </router-link>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-<!-- 여기까지 지워도 됨 -->
-  <!-- 백엔드 연결되면 /div 태그 2개 추가해야함 -->
-  
   </template>
   
-  
   <script>
-import axios from 'axios';
-
+  import report_data from '@/assets/js/report.js';
+  import axios from 'axios';
+  
   export default {
     data() {
       return {
-      // 모달을 숨겨 주는 변수선언
-      modalOpen: false,
-      name: '관리자',
-      email: 'library@pukyong.ac.kr',
-      studentNumber: '201212345',
-      // NEW!!!!!
-      badgeList: [], // 새로운 데이터 배열 추가
+        modalOpen: false,
+        name: '김부경',
+        email: 'library@pukyong.ac.kr',
+        studentNumber: '201212345',
+        reportList: report_data,
       };
-  },
-  methods: {
-    async fetchUserData() {
-      try {
-        // axios를 사용하여 서버에서 데이터를 가져옵니다.
-        const response = await axios.get("/api/user-data"); // 실제 API 엔드포인트로 변경
-        const userData = response.data; // 서버에서 받아온 데이터 객체
-
-        // 서버에서 받아온 데이터를 컴포넌트의 데이터에 할당합니다.
-        this.name = userData.name || "";
-        this.email = userData.email || "";
-        this.studentNumber = userData.studentNumber || "";        
-      } catch (error) {
-        console.error("데이터를 가져오는 중 에러 발생:", error);
-      }
     },
-    async fetchBadgeList() {
-      try {
-        const response = await axios.get("/api/badge-list"); // 실제 API 엔드포인트로 변경
-        this.badgeList = response.data.filter(book => book.approval === false); // approval이 false인 책만 필터링
-      } catch (error) {
-        console.error("데이터를 가져오는 중 에러 발생:", error);
-      }
+    methods: {
+      async fetchUserData() {
+        try {
+          const response = await axios.get("/api/user-data");
+          const userData = response.data;
+          this.name = userData.name || "";
+          this.email = userData.email || "";
+          this.studentNumber = userData.studentNumber || "";        
+        } catch (error) {
+          console.error("데이터를 가져오는 중 에러 발생:", error);
+        }
+      },
+      async fetchreportList() {  // 메서드 이름 수정
+        try {
+          const response = await axios.get("/api/report-list");
+          this.reportList = response.data.filter(book => book.approval === false);
+        } catch (error) {
+          console.error("데이터를 가져오는 중 에러 발생:", error);
+        }
+      },
+      navigateToReport(reportId) {
+        this.$router.push({ name: '/admin/report', params: { id: reportId } });
+      },
     },
-    navigateToBadge(badgeId) {
-      this.$router.push({ name: '/admin/report', params: { id: badgeId } });
+    computed: {
+      filtered_reportList() {
+        return this.reportList.filter(book => book.approval === false);
+      },
     },
-  },
-  computed: {
-    filteredBadgeList() {
-      // 필터링된 책 리스트를 반환하는 computed 속성
-      return this.badgeList.filter(book => book.approval === false);
+    mounted() {
+      this.fetchUserData();
     },
-  },
-  mounted() {
-    this.fetchUserData();
-    this.fetchBadgeList(); // 책 리스트를 가져오는 메소드 호출
-  },
-};
+  };
   </script>
   
   <style>
@@ -124,40 +84,36 @@ import axios from 'axios';
   src: url('@/assets/fonts/NanumGothic.ttf');
   }
   .main
-  {width: 360px;
-  height: 850px;
-  background: #f2f2f2;
-  }
+  {
+    width: 360px;
+    height: 800px;
+    background: #f2f2f2;
+    font-family: 'nanumgothic';
+    font-weight: 600;
+    }
+
   .Rectangle3{
     width: 360px;
-    height: 370px; 
+    height: 310px; 
     top: -20px; 
     position: relative; 
     background: #507BBC;
   }
   .Rectangle4{
     width: 308px; 
-    height: 221px; 
+    height: 170px; 
     left: 28px; 
-    top: 116px; 
+    top: 120px; 
     position: absolute; 
     background: white; 
     border-radius: 12px;
-  }
-  .Rectangle5{
-    width: 123px; 
-    height: 140px; 
-    left: 48px; 
-    top: 156px; 
-    position: absolute; 
-    background: #D9D9D9;
   }
   .PknuLogo1
   {
     width: 140px;
     height: 35px;
     left: 25px;
-    top: 75px;
+    top: 55px;
     position: absolute;
   }
 
@@ -169,13 +125,10 @@ import axios from 'axios';
   position: relative; 
   background: #D9D9D9;
   overflow-y: scroll;
-}
-
-  
+} 
   .modal-exit-btn {
     margin-top: 30px;
-  }
-  
+  }  
   .modal-exit-btn:hover {
     cursor: pointer;
   }
@@ -190,15 +143,53 @@ import axios from 'axios';
   {
     width: 135px;
     height: 28px;
-    left: 133px;
-    top: 200px;
-    position: absolute;
+    left: 2px;
+    top: -4px;
+    position: relative;
     color: black;
-    font-size: 18px;
-    font-family: Inter;
+    font-size: 25px;
+    font-family: nanumgothic;
     font-weight: 700;
     word-wrap: break-word;
   }
-
-  
+  .book {
+    top:-4px;
+  width: 260px;
+  height: 50px;
+  margin: 15px; /* 책 사이의 간격을 위해 여백 추가 */
+  position: relative; /* 상대 위치 지정 사용 */
+  background: #EFEFEF;
+  box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25);
+  border-radius: 11px;
+  text-decoration: none;
+}
+.book_title{
+    width: 100px;
+    height: 30px;
+    left: 0px;
+    top: 14px;
+    position: absolute;
+    text-align: center;
+    color: #4D4D4D;
+    font-size: 18px;
+    font-family: nanumgothic;
+    font-weight: 700;
+    word-wrap: break-word;
+    background-color: #f2f2f2;
+}
+.student_info
+{
+    width: 193px;
+    height: 25px;
+    left: 0px;
+    top: 2px;
+    position: relative;
+    color: #4D4D4D;
+    font-size: 16px;
+    font-family: nanumgothic;
+    font-weight: 500;
+    word-wrap: break-word;
+    text-decoration: none;
+    
+} 
   </style>

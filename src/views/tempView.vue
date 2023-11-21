@@ -24,7 +24,8 @@ export default {
       const baseUrl = 'http://localhost:8082/oauth2/authorization/google';
       const onSuccessRedirect = 'http://localhost:8080/main';
       const url = `${baseUrl}?response_type=code&client_id=${clientId}&scope=profile email&state=EFKjA32UrTx63Bs5wRIDqkE72JZyS_CiFjtVtAqLCY8%3D&redirect_uri=${redirectUri}&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow&onSuccess=${onSuccessRedirect}`;
-      return url;
+      // return url;
+      this.showSocialLoginPopup(url)
     },
     handleLogin() {
       // 로그인 버튼 클릭 시 수행할 작업

@@ -3,12 +3,12 @@
 
 <template>
   <div className="AndroidLarge2">
-    <router-link to="/" style=" left: -115px; top: -15px; position: relative; text-align: center; background: #ffffff; border:none;" class="modal-exit-btn">
-          <h4 style="color: #507BBC; font-weight: 300; word-wrap: break-word; font-Family: Inter;" > 돌아가기 </h4>
+    <h3 style="position: relative; top: 50px;"> 정보 수정 </h3>
+    <router-link to="/" style=" left: -122px; top: 40px; position: relative; text-align: center; background: #ffffff; border:none; text-decoration: none;" class="modal-exit-btn">
+          <h4 style="color: #507BBC; font-weight: 700; word-wrap: break-word; font-Family: nanumgothic;" > 돌아가기 </h4>          
         </router-link>
-        <h3 style="position: relative; top: -68px;"> 정보 수정 </h3>
-
-    <div style="position: relative; top:-50px">
+    <div class="divider"></div>
+    <div style="position: relative; top:70px">
         <label><input type="radio" v-bind:value="radioValue1" v-model="picked"> 학생 </label>   
         <label><input type="radio" v-bind:value="radioValue2" v-model="picked"> 관리자 </label>
 
@@ -16,42 +16,40 @@
         <form v-if="picked === '학생'" @submit.prevent="submitForm1">
         <div>
             <!-- 여기는 학생 폼 -->
-          <label for="name" style="width: 100%; height: 100%; left: -18px; top: -40px; font-weight: 700; position: relative;" >학생 이름</label>
-          <input type="text" id="name" style=" width: 194px; height: 38px; left: 15px; top: -40px; position: relative; background: #EFEFEF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 11px; border: none; text-align: right;" v-model="name" />
+          <label for="name" style="width: 100%; height: 100%; left: -22px; top: 80px; font-weight: 700; position: relative; color:#173970;" >학생 이름</label>
+          <input type="text" id="name" style=" width: 194px; height: 38px; left: 21px; top: 80px; position: relative; background: #FFFFFF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 30px; border: none; text-align: right;" v-model="name" />
         </div>
         <div>
-          <label for="email" style="width: 100%; height: 100%; left: -18px; top: -30px; font-weight: 700; position: relative;">이메일 </label>
-          <input type="email" id="email" style="width: 194px; height: 38px; left: 15px; top: -30px; position: relative; background: #EFEFEF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 11px; border: none;" v-model="email" />
+          <label for="email" style="width: 100%; height: 100%; left: -30px; top: 95px; font-weight: 700; position: relative; color:#173970;">이메일 </label>
+          <input type="email" id="email" style="width: 194px; height: 38px; left: 26px; top: 95px; position: relative; background: FFFFFF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 30px; border: none;" v-model="email" />
         </div>
         <div>
-          <label for="roleId" style="width: 100%; height: 100%; left: -18px; top: -20px; font-weight: 700; position: relative;">학번 </label>
-          <input type="number" id="roleId" style="width: 194px; height: 38px; left: 15px; top: -20px; position: relative; background: #EFEFEF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 11px; border: none;" v-model="roleId" />
-        </div>
-        <div>
-          <label for="major" style="width: 100%; height: 100%; left: 10px; top: -25px; font-weight: 700; position: relative;">학과 </label>
-          <input type="text" id="major" style="width: 255px; height: 38px; left: -10px; top: 10px; position: relative; margin-top:10px; background: #EFEFEF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 11px; border: none;" v-model="major" />
+          <label for="roleId" style="width: 100%; height: 100%; left: -35px; top: 110px; font-weight: 700; position: relative; color:#173970;">학번 </label>
+          <input type="number" id="roleId" style="width: 194px; height: 38px; left: 33px; top: 110px; position: relative; background: #FFFFFF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 30px; border: none;" v-model="roleId" />
         </div>
           <button type="submit" class="submit_btn"> 저장 </button>
-          <router-link to="/student/main" class="ok_btn"> 확인 </router-link>     
+          <div class="ok_btn" >
+          <router-link to="/student/main" style="word-wrap: break-word; color: #507BBC; text-decoration: none;"> 확인 </router-link>
+        </div>  
         </form>
 
         <!-- 관리자 폼 -->
         <form v-else-if="picked === '관리자'" @submit.prevent="submitForm2">
         <div>       
-          <label for="name" style="width: 100%; height: 100%; left: -18px; top: -40px; font-weight: 700; position: relative;" >관리자 이름</label>
-          <input type="text" id="name" style=" width: 194px; height: 38px; left: 15px; top: -40px; position: relative; background: #EFEFEF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 11px; border: none; text-align: right;" v-model="name" />
+          <label for="name" style="width: 100%; height: 100%; left: -13px; top: 80px; font-weight: 700; position: relative; color:#173970;" >관리자 이름</label>
+          <input type="text" id="name" style=" width: 194px; height: 38px; left: 13px; top: 80px; position: relative; background: #ffffff; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 30px; border: none; text-align: right;" v-model="name" />
         </div>
         <div>
-          <label for="email" style="width: 100%; height: 100%; left: -18px; top: -30px; font-weight: 700; position: relative;">이메일 </label>
-          <input type="email" id="email" style="width: 194px; height: 38px; left: 15px; top: -30px; position: relative; background: #EFEFEF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 11px; border: none;" v-model="email" />
+          <label for="email" style="width: 100%; height: 100%; left: -30px; top: 95px; font-weight: 700; position: relative; color:#173970;">이메일 </label>
+          <input type="email" id="email" style="width: 194px; height: 38px; left: 26px; top: 95px; position: relative; background: #ffffff; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 30px; border: none;" v-model="email" />
         </div>
         <div>
-          <label for="roleId" style="width: 100%; height: 100%; left: -18px; top: -20px; font-weight: 700; position: relative;">사번 </label>
-          <input type="number" id="roleId" style="width: 194px; height: 38px; left: 15px; top: -20px; position: relative; background: #EFEFEF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 11px; border: none;" v-model="roleId" />
+          <label for="roleId" style="width: 100%; height: 100%; left: -35px; top: 110px; font-weight: 700; position: relative; color:#173970;">사번 </label>
+          <input type="number" id="roleId" style="width: 194px; height: 38px; left: 33px; top: 110px; position: relative; background: #ffffff; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 30px; border: none;" v-model="roleId" />
         </div>
           <button type="submit" class="submit_btn"> 저장 </button> 
-          <div>
-          <router-link to="/admin/main" class="ok_btn"> 확인 </router-link>     
+          <div class="ok_btn" >
+          <router-link to="/admin/main" style="word-wrap: break-word; color: #507BBC; text-decoration: none;"> 확인 </router-link>     
           </div>
         </form>
     </div>
@@ -128,16 +126,21 @@ import axios from 'axios';
 </script>
 
 <style>
+@font-face{
+  font-family: 'nanumgothic';
+  src: url('@/assets/fonts/NanumGothic.ttf');
+}
 .AndroidLarge2
 {width: 360px;
 height: 800px;
-background: white;
+background: #f2f2f2;
+position: relative;
 }
 .submit_btn
 { width: 70px;
   height:40px;
-  top: 20px;
-  left: 0px;
+  top: 140px;
+  left: -30px;
   position: relative;
   background: #507BBC;
   color: white;
@@ -148,15 +151,23 @@ background: white;
 .ok_btn
 { width: 70px;
   height:40px;
-  top: 20px;
-  left: 10px;
+  top: 100px;
+  left: 190px;
   position: relative;
-  background: rgb(248, 248, 248);
+  background: rgb(237, 237, 237);
   color: #507BBC;
   border-radius: 20px; 
-  border-color: #507BBC;
-  border:3px;
+  border:1px #507BBC;
   text-align: center;
-  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.divider {
+  width: 100%;
+  height: 1px;
+  background-color: #D9D9D9; /* 선의 색상 설정 */
+  position: absolute;
+  top: 125px; /* 선의 위치 조정 */
 }
 </style>
