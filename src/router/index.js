@@ -72,6 +72,14 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/ad_reportView.vue')
   },
   {
+    path: '/login/oauth2/code/google',
+    name: 'googleLoginCallback',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/updateView.vue')
+  },
+  {
     path: '/verify',
     name: '/verfication',
     // route level code-splitting

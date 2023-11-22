@@ -22,7 +22,11 @@
             <button @click="modalOpen = false" style=" width: 40%; height: 40px; text-align: center; color: #507BBC; font-Size: 15px; fontFamily: Inter; position: relative; border:none; border-radius: 30px; " class="modal-exit-btn">
             취소
             </button>
-            <button @click="submitReport" style="width: 40%; height: 40px; text-align: center; font-Size: 15px; font-Family: Inter; word-Wrap: break-word; position: relative; background: #507BBC; border-radius: 30px; border:none; text-decoration: none; color: white;"  > 확인 </button>
+            <button style="width: 40%; height: 40px; text-align: center; font-Size: 15px; font-Family: Inter; word-Wrap: break-word; position: relative; background: #507BBC; border-radius: 30px; border:none; text-decoration: none; color: white;">
+  <router-link to="/student/main" style="color: white; text-decoration: none;">
+    확인
+  </router-link>
+</button>
           </div>
         </div>      
 </div>

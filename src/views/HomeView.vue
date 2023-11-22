@@ -39,7 +39,7 @@ export default {
     getLoginUrl(onSuccessCallback, onFailureCallback) {
       const baseUrl = 'https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount';
       const clientId = '682858095425-cithjug9d5i265s3npr1m78jmhg95lmq.apps.googleusercontent.com';
-      const redirectUri = 'http://localhost:8082/login/oauth2/code/google';
+      const redirectUri = 'http://localhost:8080/login/oauth2/code/google';
       const onSuccessRedirect = 'http://localhost:8080/main'; // 로그인 성공 시 리디렉션할 주소
       const url = `${baseUrl}?response_type=code&client_id=${clientId}&scope=profile email&state=EFKjA32UrTx63Bs5wRIDqkE72JZyS_CiFjtVtAqLCY8%3D&redirect_uri=${redirectUri}&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow&${onSuccessCallback}=${onSuccessRedirect}&${onFailureCallback}=${this.handleLoginFailure}`;
       return url;

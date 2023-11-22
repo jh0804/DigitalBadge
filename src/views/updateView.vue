@@ -17,11 +17,11 @@
         <div>
             <!-- 여기는 학생 폼 -->
           <label for="name" style="width: 100%; height: 100%; left: -22px; top: 80px; font-weight: 700; position: relative; color:#173970;" >학생 이름</label>
-          <input type="text" id="name" style=" width: 194px; height: 38px; left: 21px; top: 80px; position: relative; background: #FFFFFF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 30px; border: none; text-align: right;" v-model="name" />
+          <input type="text" id="name" style=" width: 194px; height: 38px; left: 21px; top: 80px; position: relative; background: #F2F2F2; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 30px; border: none; text-align: right;" v-model="name" />
         </div>
         <div>
           <label for="email" style="width: 100%; height: 100%; left: -30px; top: 95px; font-weight: 700; position: relative; color:#173970;">이메일 </label>
-          <input type="email" id="email" style="width: 194px; height: 38px; left: 26px; top: 95px; position: relative; background: FFFFFF; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 30px; border: none;" v-model="email" />
+          <input type="email" id="email" style="width: 194px; height: 38px; left: 26px; top: 95px; position: relative; background: #F2F2F2; box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25) inset; border-radius: 30px; border: none;" v-model="email" />
         </div>
         <div>
           <label for="roleId" style="width: 100%; height: 100%; left: -35px; top: 110px; font-weight: 700; position: relative; color:#173970;">학번 </label>
@@ -64,8 +64,8 @@ import axios from 'axios';
                 picked: '',
                 radioValue1: '학생',
                 radioValue2: '관리자',
-                name: '',
-                email: '',
+                name: '김규린',
+                email: 'zpdldptmdpf0498@gmail.com',
                 roleId: '',
                 major: '',
             };

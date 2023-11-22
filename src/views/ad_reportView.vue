@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import router from '@/router';
+// import router from '@/router';
 import report_data from '@/assets/js/report.js';
 
   export default {
@@ -66,7 +66,7 @@ import report_data from '@/assets/js/report.js';
             this.approval('dd');
         },
     },
-    components: { router }
+    // components: { router }
 };
   
 </script>

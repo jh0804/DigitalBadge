@@ -39,7 +39,7 @@ export default {
     return {
       badgeList : badge_data,
       name: '김규린',
-      email: 'gyurin00@gmail.com',
+      email: 'zpdldptmdpf0498@gmail.com',
       roleId: '201912345',
       badgeId: null, // 새로운 badgeId 추가
     };  
@@ -54,7 +54,7 @@ methods: {
         const userData = response.data; // 서버가 사용자 정보를 담은 객체를 반환한다고 가정
         this.name = userData.name ||'김규린';
         this.email = userData.email || 'axios@pukyong.ac.kr2';
-        this.roleId = userData.roleId || '201900001';
+        this.roleId = userData.roleId || '201912345';
         this.badgeId = userData.badgeId || null;
       } catch (error) {
         console.error('사용자 정보를 불러오는 중 오류 발생:', error);
