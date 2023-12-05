@@ -85,7 +85,11 @@ public class StudentService {
     ////chaincode - CreateBogo / submitTransaction(peer chaincode invoke)
     public BogoResponseDto createBogo(BogoRequestDto bogoRequestDto) {
         try {
+            System.out.println("Entering createBogo");
+    
             Bogo bogo = bogoRequestDto.toEntity();
+    
+            System.out.println("Bogo entity created");
     
             String title = bogo.getTitle();
             String author = bogo.getAuthor();
@@ -93,38 +97,59 @@ public class StudentService {
             String report = bogo.getReport();
             String ownerId = bogo.getMember().getEmail();
             String ownerName = bogo.getMember().getName();
-            Boolean approved = bogo.getApproved();
+            //Boolean approved = bogo.getApproved();
+    
+            System.out.println("Title: " + title);
+            System.out.println("Author: " + author);
+            System.out.println("Publisher: " + publisher);
+            System.out.println("Report: " + report);
+            System.out.println("OwnerId: " + ownerId);
+            System.out.println("OwnerName: " + ownerName);
+            //System.out.println("Approved: " + approved);
     
             Stu stu = stuRepository.findByMember_Email(ownerId)
-                    .orElseThrow(() -> new RuntimeException(ownerId + "에 해당하는 stu 정보가 없습니다"));
+                    .orElseThrow(() -> new RuntimeException("There is no stu information corresponding to ownerId " + ownerId));
     
             Long stuNo = stu.getId();
+    
+            System.out.println("Stu information retrieved. StuNo: " + stuNo);
     
             Path KEY_DIR_PATH = CRYPTO_PATH.resolve(Paths.get("users/User" + stuNo + "@org1.libBadge.com/msp/keystore"));
             Path CERT_PATH = CRYPTO_PATH.resolve(Paths.get("users/User" + stuNo + "@org1.libBadge.com/msp/signcerts/cert.pem"));
     
+            System.out.println("Key and Cert paths created");
+    
             Contract contract = HyperledgerFabricGateway.initializeContract(
-                MSP_ID, CRYPTO_PATH, TLS_CERT_PATH, KEY_DIR_PATH, CERT_PATH, PEER_ENDPOINT, OVERRIDE_AUTH
+                    MSP_ID, CRYPTO_PATH, TLS_CERT_PATH, KEY_DIR_PATH, CERT_PATH, PEER_ENDPOINT, OVERRIDE_AUTH
             );
     
-            //InitLedger 최초 실행
+            System.out.println("Contract initialized");
+    
+            //InitLedger first run
             if(!initialized){
                 byte[] initResult = contract.submitTransaction("InitLedger");
                 initialized = true;
+                System.out.println("InitLedger executed");
             }
-
-            byte[] result = contract.submitTransaction("CreateBogo", title, author, publisher, report, ownerId, ownerName);
+    
+            var result = contract.submitTransaction("CreateBogo", title, author, publisher, report, ownerId, ownerName);
+    
+            System.out.println("CreateBogo transaction submitted");
     
             String resultAsString = new String(result, StandardCharsets.UTF_8);
             int bogoNo = Integer.parseInt(resultAsString);
     
+            System.out.println("BogoNo: " + bogoNo);
+    
             BogoResponseDto bogoResponseDto = new BogoResponseDto(bogo);
+    
+            System.out.println("BogoResponseDto created");
     
             return bogoResponseDto;
         } catch (Exception e) {
             throw new RuntimeException("Failed to create Bogo", e);
         }
-    }    
+    }
 
     //Badge 목록 Recipient 기준 조회 
     ////chaincode - GetBadgesByRecipient / evaluateTransaction(peer chaincode query)

@@ -25,10 +25,11 @@ public class LibraryController {
     public LibraryController(LibraryService libraryService) {
         this.libraryService = libraryService;
     }
-
+/* 
     //미승인 상태 bogo 전체 조회
     //chaincode - GetUnapprovedBogos
     @GetMapping("/bogo")
+    
     public ResponseEntity<Map<String, Object>> getUnapprovedBogoList(@RequestBody MemDto memDto) {
  
         ResponseEntity<Map<String, Object>> response = libraryService.getUnapprovedBogoList(memDto);
@@ -58,6 +59,6 @@ public class LibraryController {
     //배지 발급
     //chaincode - IssueBadge
     @PostMapping("/badge")
-
+*/
 
 }
