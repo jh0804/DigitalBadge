@@ -5,20 +5,21 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.bookbadge.backend.badge.BadgeResponseDto;
+import com.bookbadge.backend.badge.BdgRequestDto;
 import com.bookbadge.backend.bogo.BogoRequestDto;
 import com.bookbadge.backend.bogo.BogoResponseDto;
 import com.bookbadge.backend.member.MemDto;
 
+@RestController
+@RequestMapping("/student")
 public class StudentController {
     
-    //@Autowired
-    //private FabricGateway fabricGateway;
-
     @Autowired
     private StudentService studentService; 
 
@@ -31,7 +32,7 @@ public class StudentController {
 
     }
     
-/*     
+
     //Recipient 기준으로 badge 목록 조회
     //chaincode - GetBadgesByRecipient
     @GetMapping("/badge")
@@ -52,11 +53,11 @@ public class StudentController {
     //badgeNo 기준으로 badge 상세 조회
     //chaincode - GetBadgeByBadgeNo
     @GetMapping("/bogo/{bogoNo}")
-    public ResponseEntity<BadgeResponseDto> GetBadgeByBadgeNo(@PathVariable Integer badgeNo) {
-        BadgeResponseDto badgeResponseDto = studentService.getBadge(badgeNo);
+    public ResponseEntity<BadgeResponseDto> GetBadgeByBadgeNo(@RequestBody BdgRequestDto bdgRequestDto) {
+        BadgeResponseDto badgeResponseDto = studentService.getBadge(bdgRequestDto);
         return ResponseEntity.ok(badgeResponseDto);
     }
 
-*/
+
 
 }

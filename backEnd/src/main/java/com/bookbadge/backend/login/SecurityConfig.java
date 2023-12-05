@@ -29,11 +29,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/student/**").hasRole(Role.STUDENT.name())
                 .antMatchers("/library/**").hasRole(Role.LIBRARY.name()) 
-                .antMatchers("/member/update").permitAll()
+                .antMatchers("/member/update","/main").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login() //OAuth2 로그인 설정 시작점
-                .defaultSuccessUrl("/main", true) //OAuth2 성공시 redirect(토큰 생성)///api/oauth/info
+                .defaultSuccessUrl("http://localhost:8080/main", true) //OAuth2 성공시 redirect(토큰 생성)///api/oauth/info
                 .userInfoEndpoint() //OAuth2 로그인 성공 이후 사용자 정보를 가져올 때 설정 담당
                 .userService(oAuthService); //OAuth2 로그인 성공 시, 작업을 진행할 MemberService
     }

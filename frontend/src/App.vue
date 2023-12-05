@@ -1,33 +1,34 @@
 <template>
-  <div>
-    <button @click="getData">데이터 가져오기</button>
-    <p>{{ responseData }}</p>
-  </div>
+  <!-- <nav>
+      <router-link to="/">Home</router-link> |
+    <router-link to="/about">메인 화면</router-link>
+  </nav> -->
+  <router-view/>
 </template>
 
 <script>
-import axios from "axios";
-export default {
-  name: "App",
-  data() {
-    return {
-      responseData: "", 
-    };
-  },
-  methods: {
-    getData() {
-      axios
-        .get("http://localhost:8082/api/test") 
-        .then((response) => {
-          this.responseData = response.data;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
-  },
-};
 </script>
 
-<style></style>
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
 
+/* nav {
+  padding: 30px;
+}
+
+nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+nav a.router-link-exact-active {
+  color: #42b983;
+} */
+</style>

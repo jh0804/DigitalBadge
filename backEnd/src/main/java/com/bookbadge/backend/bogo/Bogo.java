@@ -20,7 +20,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder 
-//@Entity
 @Data
 public class Bogo {
 
