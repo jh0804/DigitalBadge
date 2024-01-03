@@ -322,7 +322,7 @@ func (s *SmartContract) IssueBadge(ctx contractapi.TransactionContextInterface, 
 			return 0, fmt.Errorf("recipient already has a badge of level %d or higher", highestBadgeLevel)
 		}
 	} else if totalBogos >= 11 && totalBogos <= 15 {
-		if highestBadgeLevel == 1 {
+		if highestBadgeLevel == 2 {
 			badgeLevel = "3"
 			badgeImage = "https://example.com/badge_image_3"
 			badgeDescription = "This is a level 3 badge for book reports. Issued when the number of approved book reports is 11 to 15."

@@ -80,7 +80,7 @@ public class HyperledgerFabricGateway {
 
             var gateway = builder.connect();
             var network = gateway.getNetwork(CHANNEL_NAME);
-            return network.getContract(CHAINCODE_NAME);
+            return network.getContract(CHAINCODE_NAME); // = contract
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize contract", e);
         }

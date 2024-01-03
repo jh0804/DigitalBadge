@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.bookbadge.backend.badge.Badge;
 import com.bookbadge.backend.badge.BadgeResponseDto;
+import com.bookbadge.backend.badge.BdgRequestDto;
 import com.bookbadge.backend.bogo.Bogo;
 import com.bookbadge.backend.bogo.BogoRequestDto;
 import com.bookbadge.backend.bogo.BogoResponseDto;
@@ -15,7 +16,6 @@ import com.bookbadge.backend.member.StuRepository;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,10 +29,6 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
-import java.nio.file.Path;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import io.grpc.Grpc;
 import io.grpc.ManagedChannel;
@@ -57,9 +53,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.cert.CertificateException;
-import java.time.Instant;
-import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
@@ -90,7 +85,11 @@ public class StudentService {
     ////chaincode - CreateBogo / submitTransaction(peer chaincode invoke)
     public BogoResponseDto createBogo(BogoRequestDto bogoRequestDto) {
         try {
+            System.out.println("Entering createBogo");
+    
             Bogo bogo = bogoRequestDto.toEntity();
+    
+            System.out.println("Bogo entity created");
     
             String title = bogo.getTitle();
             String author = bogo.getAuthor();
@@ -98,40 +97,60 @@ public class StudentService {
             String report = bogo.getReport();
             String ownerId = bogo.getMember().getEmail();
             String ownerName = bogo.getMember().getName();
-            Boolean approved = bogo.getApproved();
+            //Boolean approved = bogo.getApproved();
+    
+            System.out.println("Title: " + title);
+            System.out.println("Author: " + author);
+            System.out.println("Publisher: " + publisher);
+            System.out.println("Report: " + report);
+            System.out.println("OwnerId: " + ownerId);
+            System.out.println("OwnerName: " + ownerName);
+            //System.out.println("Approved: " + approved);
     
             Stu stu = stuRepository.findByMember_Email(ownerId)
-                    .orElseThrow(() -> new RuntimeException(ownerId + "에 해당하는 stu 정보가 없습니다"));
+                    .orElseThrow(() -> new RuntimeException("There is no stu information corresponding to ownerId " + ownerId));
     
             Long stuNo = stu.getId();
     
-            Path KEY_DIR_PATH = CRYPTO_PATH.resolve(Paths.get("users/user" + stuNo + "@org1.libBadge.com/msp/keystore"));
-            Path CERT_PATH = CRYPTO_PATH.resolve(Paths.get("users/user" + stuNo + "@org1.libBadge.com/msp/signcerts/cert.pem"));
+            System.out.println("Stu information retrieved. StuNo: " + stuNo);
+    
+            Path KEY_DIR_PATH = CRYPTO_PATH.resolve(Paths.get("users/User" + stuNo + "@org1.libBadge.com/msp/keystore"));
+            Path CERT_PATH = CRYPTO_PATH.resolve(Paths.get("users/User" + stuNo + "@org1.libBadge.com/msp/signcerts/cert.pem"));
+    
+            System.out.println("Key and Cert paths created");
     
             Contract contract = HyperledgerFabricGateway.initializeContract(
-                MSP_ID, CRYPTO_PATH, TLS_CERT_PATH, KEY_DIR_PATH, CERT_PATH, PEER_ENDPOINT, OVERRIDE_AUTH
+                    MSP_ID, CRYPTO_PATH, TLS_CERT_PATH, KEY_DIR_PATH, CERT_PATH, PEER_ENDPOINT, OVERRIDE_AUTH
             );
     
-            //InitLedger 최초 실행
+            System.out.println("Contract initialized");
+    
+            //InitLedger first run
             if(!initialized){
                 byte[] initResult = contract.submitTransaction("InitLedger");
                 initialized = true;
+                System.out.println("InitLedger executed");
             }
-
-            byte[] result = contract.submitTransaction("CreateBogo", title, author, publisher, report, ownerId, ownerName);
+    
+            var result = contract.submitTransaction("CreateBogo", title, author, publisher, report, ownerId, ownerName);
+    
+            System.out.println("CreateBogo transaction submitted");
     
             String resultAsString = new String(result, StandardCharsets.UTF_8);
             int bogoNo = Integer.parseInt(resultAsString);
     
-            BogoResponseDto bogoResponseDto = new BogoResponseDto(bogoNo, title, author, publisher, report, ownerId, ownerName, approved);
+            System.out.println("BogoNo: " + bogoNo);
+    
+            BogoResponseDto bogoResponseDto = new BogoResponseDto(bogo);
+    
+            System.out.println("BogoResponseDto created");
     
             return bogoResponseDto;
         } catch (Exception e) {
-            // Handle exceptions appropriately
             throw new RuntimeException("Failed to create Bogo", e);
         }
-    }    
-/* 
+    }
+
     //Badge 목록 Recipient 기준 조회 
     ////chaincode - GetBadgesByRecipient / evaluateTransaction(peer chaincode query)
     public ResponseEntity<Map<String, Object>> getBadgeList(MemDto memDto) {
@@ -145,46 +164,72 @@ public class StudentService {
         String name = member.getName();
     
         Stu stu = stuRepository.findByMember_Email(email)
-                .orElseThrow(() -> new RuntimeException("There is no stu information corresponding to email " + email));
+                .orElseThrow(() -> new RuntimeException(email + "에 해당하는 stu 정보가 없습니다."));
     
         Long stuNo = stu.getId();
     
         Path KEY_DIR_PATH = CRYPTO_PATH.resolve(Paths.get("users/user" + stuNo + "@org1.libBadge.com/msp/keystore"));
         Path CERT_PATH = CRYPTO_PATH.resolve(Paths.get("users/user" + stuNo + "@org1.libBadge.com/msp/signcerts/cert.pem"));
     
-        Contract contract = HyperledgerFabricGateway.initializeContract(
-                MSP_ID, CRYPTO_PATH, TLS_CERT_PATH, KEY_DIR_PATH, CERT_PATH, PEER_ENDPOINT, OVERRIDE_AUTH
-        );
-    
-        byte[] queryResult = contract.evaluateTransaction("GetBadgesByRecipient", email, name);
-        
-        // Convert the byte array result to a list of badges
         try {
-            badgeList = Arrays.asList(OBJECT_MAPPER.readValue(queryResult, Badge[].class));
-        } catch (IOException e) {
-            throw new RuntimeException("Error converting byte array to Badge list", e);
+            Contract contract = HyperledgerFabricGateway.initializeContract(
+                    MSP_ID, CRYPTO_PATH, TLS_CERT_PATH, KEY_DIR_PATH, CERT_PATH, PEER_ENDPOINT, OVERRIDE_AUTH
+            );
+    
+            byte[] resultBytes = contract.evaluateTransaction("GetBadgesByRecipient", email);
+            String resultString = new String(resultBytes, StandardCharsets.UTF_8);
+    
+            ObjectMapper objectMapper = new ObjectMapper();
+            badgeList = Arrays.asList(objectMapper.readValue(resultString, Badge[].class));
+    
+            List<BadgeResponseDto> badgeResponseDtoList = new ArrayList<>();
+            for (Badge badge : badgeList) {
+                BadgeResponseDto dto = new BadgeResponseDto(badge);
+                badgeResponseDtoList.add(dto);
+            }
+    
+            result.put("list", badgeResponseDtoList);
+    
+            return ResponseEntity.ok(result);
+        } catch (GatewayException | JsonProcessingException e) {
+            result.put("error", "An error occurred: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
-    
-        List<BadgeResponseDto> badgeResponseDtoList = new ArrayList<>();
-        for (Badge badge : badgeList) {
-            BadgeResponseDto dto = new BadgeResponseDto(badge);
-            badgeResponseDtoList.add(dto);
-        }
-    
-        result.put("list", badgeResponseDtoList);
-    
-        return ResponseEntity.ok(result);
     }
     
 
 
     //Badge badgeBo 기준으로 상세 조회
     //chaincode - GetBadgeByBadgeNo / evaluateTransaction(peer chaincode query)
-    public BadgeResponseDto getBadge(Integer badgeNo){
-        Badge badge = contract.evaluateTransaction("GetBadgeByBadgeNo", badgeNo);
+    public BadgeResponseDto getBadge(BdgRequestDto bdgRequestDto) {
+        Badge badge = bdgRequestDto.toEntity();
+    
+        Member recipient = badge.getRecipient();
+        int badgeNo = badge.getBadgeNo();
+    
+        Stu stu = stuRepository.findByMember_Email(recipient.getEmail())
+        .orElseThrow(() -> new RuntimeException(recipient.getEmail() + "에 해당하는 stu 정보가 없습니다." ));
+    
+        Long stuNo = stu.getId();
+    
+        Path KEY_DIR_PATH = CRYPTO_PATH.resolve(Paths.get("users/user" + stuNo + "@org1.libBadge.com/msp/keystore"));
+        Path CERT_PATH = CRYPTO_PATH.resolve(Paths.get("users/user" + stuNo + "@org1.libBadge.com/msp/signcerts/cert.pem"));
+    
+        try {
+            Contract contract = HyperledgerFabricGateway.initializeContract(
+                    MSP_ID, CRYPTO_PATH, TLS_CERT_PATH, KEY_DIR_PATH, CERT_PATH, PEER_ENDPOINT, OVERRIDE_AUTH
+            );
+    
+            byte[] badgeNoBytes = String.valueOf(badgeNo).getBytes(StandardCharsets.UTF_8);
 
-        return new BadgeResponseDto(badge);
+            byte[] result = contract.evaluateTransaction("GetBadgeByBadgeNo", badgeNoBytes);
+
+            String resultAsString = new String(result, StandardCharsets.UTF_8);
+            BadgeResponseDto badgeResponseDto = new Gson().fromJson(resultAsString, BadgeResponseDto.class);
+    
+            return badgeResponseDto;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get badge", e);
+        }
     }
-*/
-
 }

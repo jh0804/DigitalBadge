@@ -27,9 +27,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout().logoutSuccessUrl("/") //logout 요청시 홈으로 이동 - 기본 logout url = "/logout"
                 .and()
                 .authorizeRequests()
-                .antMatchers("/student/**").hasRole(Role.STUDENT.name())
+                //.antMatchers("/student/**").hasRole(Role.STUDENT.name())
                 .antMatchers("/library/**").hasRole(Role.LIBRARY.name()) 
-                .antMatchers("/member/update").permitAll()
+                .antMatchers("/member/update","/main","/student/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login() //OAuth2 로그인 설정 시작점

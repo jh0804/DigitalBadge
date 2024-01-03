@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -16,7 +18,7 @@ import javax.persistence.*;
 @Getter //Lombok 어노테이션으로 getter
 @Setter
 @Table(name = "member") //테이블 관련 설정 어노테이션
-public class Member {
+public class Member implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "memId")
